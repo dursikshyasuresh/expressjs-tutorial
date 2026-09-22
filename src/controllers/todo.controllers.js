@@ -25,6 +25,10 @@ export const getSingleTodo = async (req, res) => {
     // getting single todo from todo model of mongoDB
     const todo = await Todo.findById(req.params.id)
 
+    if(!todo){
+         return res.status(404).json({message: "Todo not found!"})
+    }
+
     res.status(200).json({
       success: true,
       message: "Todo fetched sucessfully.",
