@@ -1,5 +1,6 @@
 import Todo from "../models/todo.model.js"
 import asyncHandler from "../utils/asyncHandler.js"
+import ErrorMessage from "../utils/ErrorMessage.js"
 
 // get todos: http://localhost:4000/api/todos
 export const getTodos = asyncHandler(async (req, res) => {
@@ -18,9 +19,8 @@ export const getSingleTodo = asyncHandler(async (req, res) => {
   // getting single todo from todo model of mongoDB
   const todo = await Todo.findById(req.params.id)
 
-  if (!todo) {
-    return res.status(404).json({ message: "Todo not found!" })
-  }
+  if (!todo) throw ErrorMessage(404,"Todo not found!")
+  
 
   res.status(200).json({
     success: true,
@@ -31,10 +31,14 @@ export const getSingleTodo = asyncHandler(async (req, res) => {
 
 // post todo
 export const addTodo = asyncHandler(async (req, res) => {
+  const {title,isCompleted} = req.body
+
+  if(!title) throw ErrorMessage(400,"Title is required!")
+  
   // post new todo to mongoDB
   const todo = await Todo.create({
-    title: req.body.title,
-    isCompleted: req.body.isCompleted,
+    title,
+    isCompleted
   })
 
   res.status(201).json({
@@ -47,7 +51,9 @@ export const addTodo = asyncHandler(async (req, res) => {
 // delete todo
 export const deleteTodo = asyncHandler(async (req, res) => {
   // getting single todo from todo model of mongoDB
-  await Todo.findByIdAndDelete(req.params.id)
+  const todo = await Todo.findByIdAndDelete(req.params.id)
+
+  if (!todo) throw ErrorMessage(404,"Todo not found!")
 
   res.status(200).json({
     success: true,
@@ -58,10 +64,12 @@ export const deleteTodo = asyncHandler(async (req, res) => {
 // update todo
 export const updateTodo = asyncHandler(async (req, res) => {
   // getting single todo from todo model of mongoDB
-  await Todo.findByIdAndUpdate(req.params.id, {
+  const todo = await Todo.findByIdAndUpdate(req.params.id, {
     title: req.body.title,
     isCompleted: req.body.isCompleted,
   })
+
+  if (!todo) throw ErrorMessage(404,"Todo not found!")
 
   res.status(200).json({
     success: true,
