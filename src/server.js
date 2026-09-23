@@ -2,6 +2,7 @@ import express from "express"
 import dbConnect from "./config/db.js"
 import todoRoute from "./routes/todo.route.js"
 import dotenv from "dotenv"
+import errorHandler from "./middlewares/error.middleware.js"
 
 dotenv.config()
 
@@ -25,6 +26,9 @@ app.get("/", (req,res) => {
 app.use("/api",todoRoute)
 
 
+
+// error handling middleware
+app.use(errorHandler)
 
 
 app.listen(PORT, () => {
