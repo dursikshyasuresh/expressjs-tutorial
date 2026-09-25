@@ -4,12 +4,41 @@ import ErrorMessage from "../utils/ErrorMessage.js"
 
 // get todos: http://localhost:4000/api/todos
 export const getTodos = asyncHandler(async (req, res) => {
+  // accessing sort query from api: http://localhost:4000/api/todos?sort=newest/oldest
+  const {sort,completed} = req.query
+ 
+  // by default sort value is -1
+  let sortOptions = {
+    createdAt: -1
+  }
+  
+  // if sort query is appiled in api and value is set oldest
+  // change sort value to 1
+  if(sort === "oldest"){
+    sortOptions = {createdAt: 1}
+  }
+
+   // if sort query is appiled in api and value is set to newest
+  // change sort value to -1
+   if(sort === "newest"){
+    sortOptions = {createdAt: -1}
+  }
+
+  let filterOptions = {}
+
+  if(completed !== undefined){
+    filterOptions.isCompleted = completed === "true"
+  }
+
+
   // getting todo list from todo model of mongoDB
-  const todos = await Todo.find()
+  const todos = await Todo.find(filterOptions).sort(sortOptions)
+  const total = await Todo.countDocuments()   // return total number of todo from db
 
   res.status(200).json({
     success: true,
     message: "Todo fetched sucessfully.",
+    count: total,
     todos,
   })
 })

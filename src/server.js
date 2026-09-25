@@ -3,6 +3,7 @@ import dbConnect from "./config/db.js"
 import todoRoute from "./routes/todo.route.js"
 import dotenv from "dotenv"
 import errorHandler from "./middlewares/error.middleware.js"
+import morgan from "morgan"
 
 dotenv.config()
 
@@ -14,6 +15,9 @@ dbConnect()
 
 // middleware
 app.use(express.json())   // parse json data
+// provide info about every request that reaches your server
+app.use(morgan('dev'))   
+
 
 // Home route: http://localhost:4000
 app.get("/", (req,res) => {
