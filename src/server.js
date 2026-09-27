@@ -1,6 +1,7 @@
 import express from "express"
 import dbConnect from "./config/db.js"
 import todoRoute from "./routes/todo.route.js"
+import authRoute from "./routes/auth.route.js"
 import dotenv from "dotenv"
 import errorHandler from "./middlewares/error.middleware.js"
 import morgan from "morgan"
@@ -13,8 +14,11 @@ const PORT = process.env.PORT || 4500
 // database connection
 dbConnect()
 
-// middleware
+// built-in middleware
 app.use(express.json())   // parse json data
+app.use(express.urlencoded({extended: true}))  // parse html form data
+
+// third party middleware
 // provide info about every request that reaches your server
 app.use(morgan('dev'))   
 
@@ -28,6 +32,7 @@ app.get("/", (req,res) => {
 
 // routes
 app.use("/api",todoRoute)
+app.use("/api/auth",authRoute)
 
 
 
