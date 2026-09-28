@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorMessage from "../utils/ErrorMessage.js";
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
 /**
  * @desc register user
@@ -41,5 +42,28 @@ export const registerUser = asyncHandler(async(req,res) => {
  * @access Public
  */
 export const loginUser = asyncHandler(async(req,res) => {
+     const {email,password} = req.body
+
+    const user = await User.findOne({email})
+    if(!user) throw ErrorMessage(401,"Invalid username or password!") 
+    
+    // compare password with hashed password   
+    const matchedPassword = await bcrypt.compare(password,user.password)
+    
+    if(!matchedPassword) throw ErrorMessage(401,"Invalid username or password!")
+
+    // generate token
+    const accessToken = jwt.sign(
+        {userId: user._id, role: user.role},
+        process.env.JWT_SECRET,
+        {expiresIn: process.env.JWT_EXPIRES}
+    ) 
+    
+    res.status(200).json({
+        success: true,
+        message: "Login successful",
+        user,
+        accessToken
+    })
 
 })

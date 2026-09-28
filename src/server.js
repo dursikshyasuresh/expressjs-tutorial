@@ -5,6 +5,7 @@ import authRoute from "./routes/auth.route.js"
 import dotenv from "dotenv"
 import errorHandler from "./middlewares/error.middleware.js"
 import morgan from "morgan"
+import cookieParser from "cookie-parser"
 
 dotenv.config()
 
@@ -20,7 +21,8 @@ app.use(express.urlencoded({extended: true}))  // parse html form data
 
 // third party middleware
 // provide info about every request that reaches your server
-app.use(morgan('dev'))   
+app.use(morgan('dev'))
+app.use(cookieParser())
 
 
 // Home route: http://localhost:4000
