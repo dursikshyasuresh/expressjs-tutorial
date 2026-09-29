@@ -67,7 +67,8 @@ export const addTodo = asyncHandler(async (req, res) => {
   // post new todo to mongoDB
   const todo = await Todo.create({
     title,
-    isCompleted
+    isCompleted,
+    user: req.user._id
   })
 
   res.status(201).json({
